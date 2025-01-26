@@ -1,20 +1,69 @@
 require('dotenv').config();
+let mongoose = require('mongoose');
 
+//#1 Connect to the database
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-let Person;
+//#2.0 Create a schema
+const personSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  age: Number,
+  favoriteFoods: [String],
+})
 
+//2.5 Create a model from the schema
+let Person = mongoose.model("Person", personSchema) ;
+
+//#3 create and save a record of a model
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+  let prsn = new Person({
+    name: 'Link',
+    age: 30,
+    favoriteFoods: ['Tomatos', 'Garlic', 'Onions'],
+  });
+  prsn.save((err, data) => {
+    if(err) console.log(`Error: ${err}`);
+    done(null, data);
+  });
+  
 };
 
+//#4 use model.create() to create many people with an array. this can be used for seeding a db with initial data
+let arrayOfPeople = [
+  {
+    name: 'Wonder',
+    age: 19,
+    favoriteFoods: ['Artichoke', 'Spinich'],
+  },
+  {
+    name: 'Cinnamon',
+    age: 34,
+    favoriteFoods: ['Cinnamon'],
+  }
+]
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+  Person.create(arrayOfPeople, (err, data) => {
+    if(err) console.log(err);
+    done(null, data);
+  });
+  
 };
 
+
+//#5 use model.find() to search the database
+let personName = 'Cinnamon';
 const findPeopleByName = (personName, done) => {
-  done(null /*, data*/);
+  Person.find({ name: personName }, (err, data) => {
+    if(err) console.log(err);
+    done(null, data);
+  });
+  
 };
 
+//#6 use model.findOne() to return a single matching document from your database
 const findOneByFood = (food, done) => {
   done(null /*, data*/);
 };
