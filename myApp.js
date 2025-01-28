@@ -65,22 +65,52 @@ const findPeopleByName = (personName, done) => {
 
 //#6 use model.findOne() to return a single matching document from your database
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+  Person.findOne({favoriteFoods: food}, (err, data) => {
+    if(err) console.log(err);
+    done(null, data);
+  });
+  
 };
 
+//#7 use model.findById() to search database by id. searching by _id is very common, so much so that mongoose provides a dedicated method for it
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById({ _id: personId }, (err, data) => {
+    if(err) console.log(err);
+    done(null, data);
+  })
+  
 };
 
+
+//#8 perform updates by running find/edit/save. Model.update() is a dedicated mongoose method. does not send back updated document,
+//only a status message. can bulk-edit.
+//person.find doesnt work here because it returns an array instead of an object.
 const findEditThenSave = (personId, done) => {
   const foodToAdd = "hamburger";
-
-  done(null /*, data*/);
+  Person.findById(personId, (err, data) => {
+    if(err){
+      console.log(err);
+    } else{
+      data.favoriteFoods.push(foodToAdd);
+      data.save((err, newData) => {
+        if(err){
+          console.log(err);
+        } else{
+          done(null, newData);
+        }
+      });
+    }
+  })
+  
 };
 
+
+//perform new updates on a document using model.findOneAndUpdate()
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
-
+  Person.findAndUpdate({ name: personName }, (err, data) => {
+    
+  })
   done(null /*, data*/);
 };
 
