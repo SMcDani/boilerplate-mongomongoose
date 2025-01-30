@@ -105,29 +105,44 @@ const findEditThenSave = (personId, done) => {
 };
 
 
-//perform new updates on a document using model.findOneAndUpdate()
+//#9 perform new updates on a document using model.findOneAndUpdate()
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
-  Person.findAndUpdate({ name: personName }, (err, data) => {
-    
-  })
-  done(null /*, data*/);
+  Person.findOneAndUpdate({ name: personName }, { age: 20 }, { new: true }, (err, data) => {
+    if(err){
+      console.log(err);
+    } else{
+    done(null, data);
+    }
+  });
 };
 
+//#10 remove from the db
 const removeById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findByIdAndRemove({ _id: personId }, (err, data) => {
+    if(err) console.log(err);
+    done(null, data);
+  });
 };
 
+//#11 remove multiple from the db
 const removeManyPeople = (done) => {
   const nameToRemove = "Mary";
-
-  done(null /*, data*/);
+  Person.remove({ name: nameToRemove }, (err, data) => {
+    if(err) console.log(err);
+    done(null, data);
+  })
+  
 };
 
+//#12 a callback is necessary in Model.find() as well as the other search methods, otherwise the query is not executed.
+//if wanting to execute later, the query can be stored in a var for later use, and the search will be executed when using .exec().
 const queryChain = (done) => {
   const foodToSearch = "burrito";
-
-  done(null /*, data*/);
+  Person.find({ favoriteFoods: foodToSearch }).sort('name').limit(2).select('-age').exec((err, data) => {
+    if(err) console.log(err);
+    done(null, data);
+  });
 };
 
 /** **Well Done !!**
